@@ -42,7 +42,6 @@
 
 #include "gpio.h"
 
-#define ADC_CORRECTION_V -0.006
 /* USER CODE BEGIN 0 */
 uint16_t adc_data[ADC_BUFFER_LEN];
 /* USER CODE END 0 */
@@ -128,7 +127,7 @@ float convert_adc_result(uint8_t adc_data_offset, uint8_t range){
 	vf_vsup_correction = 0.016 * vsup - 0.0528;
 	temp = temp / 16383;
 	vf = get_diode_voltage(range, temp);
-	temp = ((temp - 0.65) * vsup + ADC_CORRECTION_V + vf + vf_vsup_correction) / vsup; //move result closer to 0 by substracting 0.65 instead of 0.5
+	temp = ((temp - 0.65) * vsup + vf + vf_vsup_correction) / vsup; //move result closer to 0 by substracting 0.65 instead of 0.5
 	if (temp < 0)
 		temp = 0;
 	 return round(temp*10000);
@@ -136,27 +135,27 @@ float convert_adc_result(uint8_t adc_data_offset, uint8_t range){
 
 float get_diode_voltage(uint8_t range, float value){
 	if (range == 0){
-		if (value>0.75){
-			return 0.3666 - 0.00199 * 100 * value;
+		if (value>0.72){
+			return 0.393-0.223 * value;
 		}
 		else{
-			return 0.1503 + 0.00076 * 100 * value;
+			return 0.1921+0.05 * value;
 		}
 	}
 	else if (range == 1){
-		if (value>0.72){
-			return 0.2956 - 0.00114 * 100 * value;
+		if (value>0.73){
+			return 0.3385-0.152 * value;
 		}
 		else{
-			return 0.1092 + 0.00142 * 100 * value;
+			return 0.212+0.02 * value;
 		}
 	}
 	else{
-		if (value>0.70){
-			return 0.2437 - 0.00048 * 100 * value;
+		if (value>0.74){
+			return 0.3043-0.108 * value;
 		}
 		else{
-			return 0.1534 + 0.00077 * 100 * value;
+			return 0.1921+0.05 * value;
 		}
 	}
 

@@ -83,7 +83,7 @@ int main(void)
 	uint16_t sampling_interval=0, free_mem_start, result_write_header;
 	uint32_t time, time_diff;
 	uint64_t compressed_data;
-	uint8_t decoded_time[7], data_buffer[20], memory_full = True, time_ok = False;
+	uint8_t decoded_time[7], data_buffer[20], memory_full=True, time_ok = False;
 	//uint16_t i;
 	/* USER CODE END 1 */
 
@@ -114,10 +114,7 @@ int main(void)
 	if(LL_PWR_IsActiveFlag_WU1()){
 		LL_PWR_ClearFlag_WU1();
 
-		//dbg
-		LL_GPIO_SetOutputPin(LD3_GPIO_Port, LD3_Pin);
-		lptim_sleep_us(200000);
-		LL_GPIO_ResetOutputPin(LD3_GPIO_Port, LD3_Pin);
+		lptim_sleep_us(5000);
 		__disable_irq();
 		if (LL_GPIO_IsInputPinSet(GPIOA, LL_GPIO_PIN_0) && !wkup_irq_flg){
 			LL_LPM_EnableDeepSleep();
@@ -142,6 +139,12 @@ int main(void)
 	}
 
 	if (!wkup_irq_flg || configuration_changed){
+
+		//dbg
+		LL_GPIO_SetOutputPin(LD3_GPIO_Port, LD3_Pin);
+		lptim_sleep_us(200000);
+		LL_GPIO_ResetOutputPin(LD3_GPIO_Port, LD3_Pin);
+
 		//this section reads data from BPS230
 		LL_I2C_Enable(I2C1);
 
@@ -185,12 +188,12 @@ int main(void)
 		}
 		moisture = convert_adc_result(0, 1);
 
-		if (moisture >= 260 && moisture <= 2412){
+		if (moisture >= 590 && moisture <= 2412){
 			moisture = (1 << 12) | moisture;
 		}
 		else if (moisture > 2412){
 			lptim_set_divider(4);
-			lptim_sleep_us(100000);
+			lptim_sleep_us(60000);
 			LL_ADC_REG_StartConversion(ADC1);
 			while(LL_ADC_REG_IsConversionOngoing(ADC1)){
 				__WFI();
